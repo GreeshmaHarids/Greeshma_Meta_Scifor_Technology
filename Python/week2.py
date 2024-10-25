@@ -32,29 +32,36 @@ st.write("Using *streamlit run filename.py* in the terminal.(where *filename.py*
 st.write("Question no.8")
 st.divider()
 
-#eg for bar chart
+import streamlit as st
 import matplotlib.pyplot as plt
 
-# Sample data
-data = {'A': 30, 'B': 40, 'C': 50}
-
-# Create a bar chart
-st.header("Bar Chart Example")
-plt.bar(data.keys(), data.values())
-st.pyplot(plt)
-
-#eg for pie chart
-
-pie_data = {
-    'Red': 40,
-    'Blue': 30,
-    'Green': 20,
-    'Yellow': 10
+# Sample data for bar chart
+bar_data = {
+    'Category A': 25,
+    'Category B': 40,
+    'Category C': 35
 }
-st.header("Color Distribution Pie Chart")
-plt.pie(pie_data.values(), labels=pie_data.keys(), autopct='%1.1f%%', startangle=90)
-plt.title('Color Distribution')
-st.pyplot(plt)
 
+# Sample data for pie chart
+pie_data = {
+    'Slice 1': 15,
+    'Slice 2': 25,
+    'Slice 3': 60
+}
 
+# Sidebar to select the chart type
+chart_type = st.sidebar.selectbox("Select chart type:", ["Bar Chart", "Pie Chart"])
 
+if chart_type == "Bar Chart":
+    st.header("Bar Chart Example")
+    plt.bar(bar_data.keys(), bar_data.values(), color='skyblue')
+    plt.title('Bar Chart')
+    plt.xlabel('Categories')
+    plt.ylabel('Values')
+    st.pyplot(plt)
+
+elif chart_type == "Pie Chart":
+    st.header("Pie Chart Example")
+    plt.pie(pie_data.values(), labels=pie_data.keys(), autopct='%1.1f%%', startangle=90)
+    plt.title('Pie Chart')
+    st.pyplot(plt)
