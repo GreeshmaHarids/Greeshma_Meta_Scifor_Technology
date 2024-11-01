@@ -43,7 +43,7 @@ st.set_page_config(layout="wide")
 st.title(":violet[Stock Market Dashboard]")
 
 # Sidebar for page selection
-page = st.sidebar.selectbox("Select Page", ["Home", "Comparative Analysis","User Guidelines"])
+page = st.sidebar.selectbox("Select Page", ["Home", "Comparative Analysis"])
 
 
 
@@ -61,49 +61,6 @@ def fetch_data(ticker):
     data = stock.history(period="1d")
     return data
 
-guidelines_file = """
-
-# User Guidelines for Stock Market Dashboard
-
-Welcome! This app helps you analyze and compare stock data. Follow these steps to get started:
-
-## Getting Started
-
-1. **Select Page**: 
-   - Use the sidebar to choose **Home** or **Comparative Analysis**.
-
-2. **Enter Stock Information**: 
-   - **Ticker Symbol**: Type the stock symbol (e.g., AAPL).
-   - **Start Date & End Date**: Pick dates for the data range.
-   - **Select Timeframe**: Choose **Daily**, **Weekly**, or **Monthly**.
-
-3. **Fetch Data**: 
-   - Click **Fetch Data** to retrieve stock information. Wait for a success message before proceeding.
-
-4. **Download Data**: 
-   - After fetching, click **Download CSV** to save the market data.
-
-## Analyzing Stock Data
-
-### Home Page
-- **Stock Price Trends**: View a line chart of the stock's adjusted close price.
-- **Moving Averages**: See the 50-day and 200-day moving averages to understand trends.
-- **Pricing Movements**: Analyze daily price changes and annual return data.
-- **Stock News**: Read the latest news articles related to the stock with sentiment ratings.
-
-### Comparative Analysis
-- **Compare Stocks**: Enter another ticker symbol to see a side-by-side comparison.
-- **Moving Averages Options**: Choose to display 50-day and 200-day moving averages for both stocks.
-- View a comparative line chart for adjusted close prices and selected moving averages.
-
-## Error Handling
-- If an error occurs while fetching data, a message will appear. Check your ticker symbol and try again.
-
-## Note
-- Ensure you have a stable internet connection to access real-time data.
-
-Enjoy exploring the stock market with your Stock Market Dashboard!
-"""
 
 # Check if the page is User Guidelines
 
