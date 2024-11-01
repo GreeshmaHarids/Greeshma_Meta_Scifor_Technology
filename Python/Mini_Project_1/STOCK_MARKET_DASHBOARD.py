@@ -106,31 +106,9 @@ Enjoy exploring the stock market with your Stock Market Dashboard!
 """
 
 # Check if the page is User Guidelines
-if page == "User Guidelines":  # Corrected spelling
-    st.header("User Guidelines")
-    st.write("Click the button below to download the user guidelines.")
-    
-    # Add error handling for file reading
-    try:
-        with open(guidelines_file, "r") as f:
-            guidelines_content = f.read()
-        
-        # Create a download button
-        st.download_button(
-            label="Download User Guidelines",
-            data=guidelines_content,
-            file_name="user_guidelines.txt",
-            mime="text/plain"
-        )
-    except FileNotFoundError:
-        st.error("User guidelines file not found. Please check the file path.")
-    except Exception as e:
-        st.error(f"Error reading the user guidelines file: {e}")
-
-
 
 # Fetch stock data if ticker is provided
-elif ticker:
+if ticker:
     if st.button("Fetch Data"):
         with st.spinner("Fetching data..."):
             try:
