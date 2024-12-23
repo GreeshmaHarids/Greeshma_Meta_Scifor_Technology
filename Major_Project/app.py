@@ -17,7 +17,7 @@ from nltk import word_tokenize, pos_tag
 nltk.download('punkt_tab')
 nltk.download('averaged_perceptron_tagger_eng')
 
-engine = pyttsx3.init('sapi5')
+engine = pyttsx3.init()
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
 
