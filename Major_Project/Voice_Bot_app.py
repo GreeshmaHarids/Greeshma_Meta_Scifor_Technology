@@ -1,7 +1,4 @@
 import streamlit as st
-# from file_1_copy import *
-import sys
-import pyttsx3
 import datetime
 import speech_recognition as sr
 import os
@@ -10,25 +7,39 @@ import webbrowser
 import pyjokes
 import time
 import nltk
+from gtts import gTTS
+import tempfile
+import pygame
 from nltk import word_tokenize, pos_tag
-import platform
 
-system_name = platform.system()
+
 
 
 nltk.download('punkt_tab')
 nltk.download('averaged_perceptron_tagger_eng')
 
-engine = pyttsx3.init('sapi5')
-voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[1].id)
 
 # creating functions 
-def speak(audio):
-    engine = pyttsx3.init()
-    engine.say(audio)
-    engine.runAndWait()
 
+def speak(audio):
+    # Initialize the gTTS instance
+    tts = gTTS(text=audio, lang='en', slow=False)
+    
+    # Create a temporary file and save the speech as an mp3
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmpfile:
+        file_path = tmpfile.name
+        tts.save(file_path)  # Save the mp3 to the temporary file path
+    
+    # Initialize pygame mixer
+    pygame.mixer.init()
+    
+    # Load and play the generated mp3 file
+    pygame.mixer.music.load(file_path)
+    pygame.mixer.music.play()
+    
+    # Wait until the audio finishes playing before continuing
+    while pygame.mixer.music.get_busy():
+        pygame.time.Clock().tick(10)
 def say_greetings():
     hour = int(datetime.datetime.now().hour)
     if 5 <= hour < 12:
