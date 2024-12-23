@@ -236,7 +236,7 @@ st.markdown("""
 
 col1, col2, col3 = st.columns(3)
 with col2:
-    st.image("Major_Project/voicebot_env/bot_image.png", use_column_width=True)
+    st.image("Major_Project/bot_image.png", use_container_width=True)
     st.caption("<p class='centered-text' style='color: #808080;'><b>Let's Chat! I'm Here to Help.</b></p>", unsafe_allow_html=True)
     st.markdown(title_alignment, unsafe_allow_html=True)
     if st.button("Ask", use_container_width=True):
