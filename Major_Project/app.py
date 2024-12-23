@@ -23,7 +23,7 @@ engine.setProperty('voice', voices[1].id)
 
 # creating functions 
 def speak(audio):
-    engine = pyttsx3.init()
+    engine = pyttsx3.init('eas')
     engine.say(audio)
     engine.runAndWait()
 
