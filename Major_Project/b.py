@@ -29,14 +29,12 @@ st.title("Text to Speech - In-Memory Playback")
 user_input = st.text_area("Enter text to convert to speech:")
 
 if user_input:
-    # Convert text to speech and play aloud
-    audio_buffer = convert_text_to_speech(user_input)
-    
+    # Convert text to speech and play aloud    
     # Estimate duration (approx. 2.5 words/sec)
     estimated_duration = len(user_input.split()) / 2.5
 
     # Display spinner while "reading"
     with st.spinner("Reading text aloud, please wait..."):
-        autoplay_audio(audio_buffer)
+        autoplay_audio(convert_text_to_speech(user_input))
         time.sleep(estimated_duration)  # Simulate waiting for audio playback to complete
     st.success("Finished reading!")
