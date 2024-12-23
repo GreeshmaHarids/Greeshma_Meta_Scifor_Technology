@@ -22,4 +22,3 @@ streamlit==1.41.1
 thread==2.0.5
 urllib3_secure_extra==0.1.0
 wikipedia==1.4.0
-xmlrpclib==1.0.1
