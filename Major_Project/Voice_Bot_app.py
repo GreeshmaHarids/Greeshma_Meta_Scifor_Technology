@@ -259,6 +259,7 @@ with col2:
             run_bot()
             st.empty()
         except Exception as e:
+            print(e)
             st.write("Please try one more time")
             st.stop()
 
