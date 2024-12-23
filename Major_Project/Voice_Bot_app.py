@@ -9,6 +9,7 @@ import wikipedia
 import webbrowser
 import pyjokes
 import time
+import nltk
 from nltk import word_tokenize, pos_tag
 import platform
 
