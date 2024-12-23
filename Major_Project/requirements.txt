@@ -34,8 +34,7 @@ pyjokes==0.8.3
 pypiwin32==223
 python-dateutil==2.9.0.post0
 pyttsx3==2.98
-pytz==2022.1
-pywin32==308
+pytz==2023.1
 referencing==0.35.1
 regex==2024.11.6
 requests==2.32.3
