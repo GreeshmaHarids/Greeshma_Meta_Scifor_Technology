@@ -31,7 +31,7 @@ PyAudio==0.2.14
 pydeck==0.9.1
 Pygments==2.18.0
 pyjokes==0.8.3
-pypiwin32==223
+pywin32==308
 python-dateutil==2.9.0.post0
 pyttsx3==2.98
 pytz==2024.2
