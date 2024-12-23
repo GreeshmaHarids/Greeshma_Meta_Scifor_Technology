@@ -32,5 +32,4 @@ user_input = st.text_area("Enter text to convert to speech:")
 
 if user_input:
     # Convert text to speech and play aloud
-    audio_file_path = convert_text_to_speech(user_input)
-    autoplay_audio(audio_file_path)
+    autoplay_audio(convert_text_to_speech(user_input))
