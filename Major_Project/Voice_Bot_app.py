@@ -31,7 +31,7 @@ def speak(audio):
         tts.save(file_path)  # Save the mp3 to the temporary file path
     
     # Initialize pygame mixer
-    pygame.mixer.init()
+    # pygame.mixer.init()
     
     # Load and play the generated mp3 file
     pygame.mixer.music.load(file_path)
