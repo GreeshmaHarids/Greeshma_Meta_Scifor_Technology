@@ -9,11 +9,8 @@ import wikipedia
 import webbrowser
 import pyjokes
 import time
-import nltk
 from nltk import word_tokenize, pos_tag
 import platform
-import win32com.client
-
 
 system_name = platform.system()
 
@@ -21,13 +18,7 @@ system_name = platform.system()
 nltk.download('punkt_tab')
 nltk.download('averaged_perceptron_tagger_eng')
 
-if system_name == "Windows":
-    engine = pyttsx3.init('sapi5')  # Windows-specific engine
-elif system_name == "Darwin":  # macOS
-    engine = pyttsx3.init('nsss')  # macOS-specific engine
-else:  # Linux or others
-    engine = pyttsx3.init('espeak')  # Linux-specific engine
-
+engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
 
