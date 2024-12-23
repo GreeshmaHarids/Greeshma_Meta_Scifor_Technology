@@ -17,13 +17,13 @@ from nltk import word_tokenize, pos_tag
 nltk.download('punkt_tab')
 nltk.download('averaged_perceptron_tagger_eng')
 
-engine = pyttsx3.init()
+engine = pyttsx3.init('espeak')
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
 
 # creating functions 
 def speak(audio):
-    engine = pyttsx3.init('eas')
+    engine = pyttsx3.init()
     engine.say(audio)
     engine.runAndWait()
 
