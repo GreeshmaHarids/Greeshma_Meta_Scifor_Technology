@@ -9,8 +9,10 @@ import time
 import nltk
 from gtts import gTTS
 import tempfile
-import pygame
+# import pygame
 from nltk import word_tokenize, pos_tag
+import base64
+
 
 
 
@@ -21,40 +23,42 @@ nltk.download('averaged_perceptron_tagger_eng')
 
 # creating functions 
 
-def speak(audio):
-    # Initialize the gTTS instance
-    tts = gTTS(text=audio, lang='en', slow=False)
-    
-    # Create a temporary file and save the speech as an mp3
+def convert_text_to_speech(text):
+    tts = gTTS(text=text, lang='en', slow=False)
+    # Create a temporary file to save the speech
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmpfile:
         file_path = tmpfile.name
-        tts.save(file_path)  # Save the mp3 to the temporary file path
-    
-    # Initialize pygame mixer
-    # pygame.mixer.init()
-    
-    # Load and play the generated mp3 file
-    pygame.mixer.music.load(file_path)
-    pygame.mixer.music.play()
-    
-    # Wait until the audio finishes playing before continuing
-    while pygame.mixer.music.get_busy():
-        pygame.time.Clock().tick(10)
+        tts.save(file_path)  # Save the audio to the temp file
+    return file_path
+
+# Function to autoplay the audio
+def autoplay_audio(file_path):
+    with open(file_path, "rb") as audio_file:
+        audio_bytes = audio_file.read()
+        b64_audio = base64.b64encode(audio_bytes).decode()
+        audio_html = f"""
+        <audio autoplay>
+            <source src="data:audio/mp3;base64,{b64_audio}" type="audio/mpeg">
+        </audio>
+        """
+        st.markdown(audio_html, unsafe_allow_html=True)
+
+
 def say_greetings():
     hour = int(datetime.datetime.now().hour)
     if 5 <= hour < 12:
-        speak("Good morning!")
+        autoplay_audio(convert_text_to_speech("Good morning!"))
         st.write("Good morning.....!")
     elif 12 <= hour < 17:
-        speak("Good afternoon!")
+        autoplay_audio(convert_text_to_speech("Good afternoon!"))
         st.write("Good afternoon!")
     elif 17 <= hour < 22:
-        speak("Good evening!")
+        autoplay_audio(convert_text_to_speech("Good evening!"))
         st.write("Good evening!")
     else:
-        speak("Hello ! ")
+        autoplay_audio(convert_text_to_speech("Hello ! "))
         st.write("Hello...!")
-    speak("How can I help you?")
+    autoplay_audio(convert_text_to_speech("How can I help you?"))
     st.write("How can I help you?")
 
 def takeCommand():
@@ -91,7 +95,7 @@ def run_bot():
             query = takeCommand()
 
             if query is None:  # Check if the query is None
-                speak("Sorry, I couldn't hear anything. Please try again.")
+                autoplay_audio(convert_text_to_speech("Sorry, I couldn't hear anything. Please try again."))
                 st.write("Sorry, I couldn't hear anything. Please try again.")
                 st.stop()  # Exit the function and try again
 
@@ -114,14 +118,14 @@ def run_bot():
                     if search_results:
                         best_match = search_results[0]
                         results = wikipedia.summary(best_match, sentences=1)
-                        speak(results)
+                        autoplay_audio(convert_text_to_speech(results))
                         st.write(results)
                     else:
-                        speak("I couldn't find anything on Wikipedia.")
+                        autoplay_audio(convert_text_to_speech("I couldn't find anything on Wikipedia."))
                         st.write("I couldn't find anything on Wikipedia.")
                 except Exception as e:
                     st.error("Oops! Your query is too broad. Please refine your search.")
-                    speak("Oops! Your query is too broad. Please refine your search.")
+                    autoplay_audio(convert_text_to_speech("Oops! Your query is too broad. Please refine your search."))
                     st.write("Here are some suggestions:")
 
                     # Display options for the user
@@ -136,13 +140,13 @@ def run_bot():
 
 
             elif 'open youtube' in query:
-                speak("Here you go to Youtube\n")
+                autoplay_audio(convert_text_to_speech("Here you go to Youtube\n"))
                 webbrowser.open("youtube.com")
                 st.write("Opened Youtube in Browser")
                 time.sleep(3)
 
             elif 'open google' in query:
-                speak("Here you go to Google\n")
+                autoplay_audio(convert_text_to_speech("Here you go to Google\n"))
                 webbrowser.open("https://www.google.com")
                 st.write("Opened Google in Browser")
                 time.sleep(3)
@@ -156,36 +160,36 @@ def run_bot():
 
                 # Final reply
                 st.write(f"Today is {formatted_date}, and the time is {formatted_time}.")
-                speak(f"Today is {formatted_date}, and the time is {formatted_time}.")
+                autoplay_audio(convert_text_to_speech(f"Today is {formatted_date}, and the time is {formatted_time}."))
 
             elif 'exit' in query:
-                speak("Thanks for giving me your time")
+                autoplay_audio(convert_text_to_speech("Thanks for giving me your time"))
                 st.markdown('<p class="centered-text"><b>Thanks for giving me your time 😊!</b></p>', unsafe_allow_html=True)
                 st.stop()
 
             elif 'joke' in query:
                 jokes = pyjokes.get_joke()
-                speak(f"Here it comes!{jokes}")
+                autoplay_audio(convert_text_to_speech(f"Here it comes!{jokes}"))
                 st.write(f"**Joke:**\n\n```{jokes}```")
                 time.sleep(3)
 
             elif any(word in query for word in ['Thankyou', 'Thanks']):
-                speak("You're welcome!")
+                autoplay_audio(convert_text_to_speech("You're welcome!"))
                 st.write("You're welcome!")
 
             elif any(word in query for word in ['Hi', 'hello','hey','Greetings!']):
-                speak("Hey! How can I assist you today? ")
+                autoplay_audio(convert_text_to_speech("Hey! How can I assist you today? "))
                 st.write("Hey! How can I assist you today?")
 
             elif query == query.lower():
                 try:
                     st.write("Searching for.....", query)
-                    speak(wikipedia.summary(query, sentences=2))
+                    autoplay_audio(convert_text_to_speech(wikipedia.summary(query, sentences=2)))
                     st.write(wikipedia.summary(query, sentences=2))
                     time.sleep(3)
                 except Exception as e:
                     st.error("Oops! Your query is too broad. Please refine your search.")
-                    speak("Oops! Your query is too broad. Please refine your search.")
+                    autoplay_audio(convert_text_to_speech("Oops! Your query is too broad. Please refine your search."))
                     st.write("Here are some suggestions:")
 
                     # Display options for the user
@@ -201,13 +205,13 @@ def run_bot():
 
                     time.sleep(5)
             else:
-                speak("Sorry couldn't find a result, try one more time")
+                autoplay_audio(convert_text_to_speech("Sorry couldn't find a result, try one more time"))
                 st.write("Sorry couldn't find a result, try one more time")
 
 
         except AttributeError as a:
             st.write("Unable to recognize your voice")
-            speak("Please try one more time, your voice was not recognized")
+            autoplay_audio(convert_text_to_speech("Please try one more time, your voice was not recognized"))
 
         except RuntimeError as r:
             st.write("An issue occurred due to multiple clicks. Please restart and try again.")
@@ -215,7 +219,7 @@ def run_bot():
         # sys.exit(takeCommand())
 
         time.sleep(2)
-        speak("Do you have any other queries? Please ask, I am listening.... ")
+        autoplay_audio(convert_text_to_speech("Do you have any other queries? Please ask, I am listening.... "))
 
         
 
@@ -264,7 +268,7 @@ with col2:
             st.stop()
 
 if st.button("Exit", use_container_width=True):
-    speak("Thanks for giving me your time")
+    autoplay_audio(convert_text_to_speech("Thanks for giving me your time"))
     st.markdown('<p class="centered-text"><b>Thanks for giving me your time 😊!</b></p>', unsafe_allow_html=True)
     st.stop()
 
