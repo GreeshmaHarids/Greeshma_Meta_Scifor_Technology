@@ -1,0 +1,2 @@
+Requirement already satisfied: pypiwin32 in c:\users\grees\.conda\envs\streamlit_new_env\lib\site-packages (223)
+Requirement already satisfied: pywin32>=223 in c:\users\grees\.conda\envs\streamlit_new_env\lib\site-packages (from pypiwin32) (308)
