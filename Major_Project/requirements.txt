@@ -4,6 +4,5 @@ wikipedia==1.4.0
 pyjokes==0.8.3
 nltk==3.9.1
 gtts==2.5.4
-pygame==2.6.1
 pyaudio==0.2.14
-PyAudio-0.2.14-cp39-cp39-win_amd64.whl
+Major_Project\PyAudio-0.2.14-cp39-cp39-win_amd64.whl
