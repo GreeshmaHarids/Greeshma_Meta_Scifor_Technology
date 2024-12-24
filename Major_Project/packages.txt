@@ -1,1 +1,2 @@
-eSpeak-ng
+portaudio19-dev
+python3-all-dev

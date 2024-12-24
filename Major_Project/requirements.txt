@@ -5,4 +5,3 @@ pyjokes==0.8.3
 nltk==3.9.1
 gtts==2.5.4
 pyaudio==0.2.14
--e ./PyAudio-0.2.14-cp39-cp39-win_amd64.whl
