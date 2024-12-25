@@ -154,11 +154,13 @@ try:
         
         elif "open youtube" in transcribed_text:
             webbrowser.open("youtube.com")
+            response_text="Opened Youtube in Browser"
             st.write("Opened Youtube in Browser")
             time.sleep(3)
 
         elif "open google" in transcribed_text:
             webbrowser.open("https://www.google.com")
+            response_text="Opened Google in Browser"
             st.write("Opened Google in Browser")
             time.sleep(3)
 
