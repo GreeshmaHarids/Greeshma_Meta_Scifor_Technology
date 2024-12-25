@@ -75,7 +75,6 @@ def takeCommand(audio_file):
             audio_data = recognizer.record(source)
         try:
             text = recognizer.recognize_google(audio_data, language='en-in')
-            st.write("User said: ", text)
             return text
              
         except Exception as e:
@@ -111,6 +110,7 @@ if st.button("Run Bot",help='Click to start voice bot',use_container_width=True)
 try:
     if st.session_state.transcribed_text:
         transcribed_text = st.session_state.transcribed_text.lower()
+        st.write(f"User said: {transcribed_text}")
 
         # Simple conversational logic
         if any(word in transcribed_text for word in ['hi', 'hello', 'hey']):
