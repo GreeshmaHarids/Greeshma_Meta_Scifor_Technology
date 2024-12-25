@@ -1,217 +1,27 @@
 import streamlit as st
 # from file_1_copy import *
-import datetime
-import speech_recognition as sr
-import os
+# import datetime
+from speech_recognition import Recognizer, AudioFile
+from gtts import gTTS
 import wikipedia
 import webbrowser
 import pyjokes
 import time
-import nltk
-import pyttsx3
+import io
+import nltk 
 from nltk import word_tokenize, pos_tag
-
-
-
+import datetime
 
 nltk.download('punkt_tab')
 nltk.download('averaged_perceptron_tagger_eng')
 
-engine = pyttsx3.init('espeak')
-voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[1].id)
-
-# creating functions 
-def speak(audio):
-    engine = pyttsx3.init()
-    engine.say(audio)
-    engine.runAndWait()
-
-def say_greetings():
-    hour = int(datetime.datetime.now().hour)
-    if 5 <= hour < 12:
-        speak("Good morning!")
-        st.write("Good morning.....!")
-    elif 12 <= hour < 17:
-        speak("Good afternoon!")
-        st.write("Good afternoon!")
-    elif 17 <= hour < 22:
-        speak("Good evening!")
-        st.write("Good evening!")
-    else:
-        speak("Hello ! ")
-        st.write("Hello...!")
-    speak("How can I help you?")
-    st.write("How can I help you?")
-
-def takeCommand():
-    r = sr.Recognizer()
-
-    with sr.Microphone() as source:
-        st.write("Listening.......")
-        r.pause_threshold = 1
-        audio = r.listen(source)
-
-    try:
-        st.write("Recognizing............")
-        st.spinner("Recognizing")
-        query = r.recognize_google(audio, language='en-in')
-        print(f"User said: {query}\n")
-
-    except Exception as e:
-        print(e)
-        print("Unable to Recognize your voice")
-        return None
-
-    return query
-
-def run_bot():
-    clear = lambda: os.system('cls')
-
-    # this fn. will clean any command before execution of this python file
-    clear()
-    say_greetings()
-    
-
-    while True:
-        try:
-            query = takeCommand()
-
-            if query is None:  # Check if the query is None
-                speak("Sorry, I couldn't hear anything. Please try again.")
-                st.write("Sorry, I couldn't hear anything. Please try again.")
-                st.stop()  # Exit the function and try again
-
-            query = query.lower()  # Convert the query to lowercase
-            
-            # All the commands said by user will be 
-            # stored here in 'query' and will be
-            # converted to lower case for easily 
-            # recognition of command
-            st.write(f"User asked: {query}")
-            time.sleep(3)
-
-            if any(word in query for word in ['who', 'what', 'where', 'wikipedia', 'search']):
-                try:
-                    query_tokens = word_tokenize(query)
-                    essential_words = [word for word, tag in pos_tag(query_tokens) if tag in ['NN', 'NNP']]
-                    query = " ".join(essential_words)
-                    st.write("Searching for.....", query)
-                    search_results = wikipedia.search(query)
-                    if search_results:
-                        best_match = search_results[0]
-                        results = wikipedia.summary(best_match, sentences=1)
-                        speak(results)
-                        st.write(results)
-                    else:
-                        speak("I couldn't find anything on Wikipedia.")
-                        st.write("I couldn't find anything on Wikipedia.")
-                except Exception as e:
-                    st.error("Oops! Your query is too broad. Please refine your search.")
-                    speak("Oops! Your query is too broad. Please refine your search.")
-                    st.write("Here are some suggestions:")
-
-                    # Display options for the user
-                    for option in e.options:
-                        if st.button(option):  # Create a button for each option
-                            try:
-                                refined_summary = wikipedia.summary(option)
-                                st.write(f"**{option}:** {refined_summary}")
-                            except Exception as ex:
-                                st.error(f"Error retrieving summary for {option}: {ex}")
-                    time.sleep(5)
-
-
-            elif 'open youtube' in query:
-                speak("Here you go to Youtube\n")
-                webbrowser.open("youtube.com")
-                st.write("Opened Youtube in Browser")
-                time.sleep(3)
-
-            elif 'open google' in query:
-                speak("Here you go to Google\n")
-                webbrowser.open("https://www.google.com")
-                st.write("Opened Google in Browser")
-                time.sleep(3)
-
-            elif 'time' in query or 'date' in query:
-                now = datetime.datetime.now()
-
-                # Format date and time
-                formatted_date = now.strftime("%B %d, %Y")
-                formatted_time = now.strftime("%I:%M %p").lower()
-
-                # Final reply
-                st.write(f"Today is {formatted_date}, and the time is {formatted_time}.")
-                speak(f"Today is {formatted_date}, and the time is {formatted_time}.")
-
-            elif 'exit' in query:
-                speak("Thanks for giving me your time")
-                st.markdown('<p class="centered-text"><b>Thanks for giving me your time 😊!</b></p>', unsafe_allow_html=True)
-                st.stop()
-
-            elif 'joke' in query:
-                jokes = pyjokes.get_joke()
-                speak(f"Here it comes!{jokes}")
-                st.write(f"**Joke:**\n\n```{jokes}```")
-                time.sleep(3)
-
-            elif any(word in query for word in ['Thankyou', 'Thanks']):
-                speak("You're welcome!")
-                st.write("You're welcome!")
-
-            elif any(word in query for word in ['Hi', 'hello','hey','Greetings!']):
-                speak("Hey! How can I assist you today? ")
-                st.write("Hey! How can I assist you today?")
-
-            elif query == query.lower():
-                try:
-                    st.write("Searching for.....", query)
-                    speak(wikipedia.summary(query, sentences=2))
-                    st.write(wikipedia.summary(query, sentences=2))
-                    time.sleep(3)
-                except Exception as e:
-                    st.error("Oops! Your query is too broad. Please refine your search.")
-                    speak("Oops! Your query is too broad. Please refine your search.")
-                    st.write("Here are some suggestions:")
-
-                    # Display options for the user
-                    for option in e.options:
-                        if st.button(option):  # Create a button for each option
-                            try:
-                                refined_summary = wikipedia.summary(option)
-                                st.write(f"{option}:{refined_summary}")
-                                if refined_summary == None:
-                                    st.write("No suggestions")
-                            except Exception as ex:
-                                st.error(f"Error retrieving summary for {option}: {ex}")
-
-                    time.sleep(5)
-            else:
-                speak("Sorry couldn't find a result, try one more time")
-                st.write("Sorry couldn't find a result, try one more time")
-
-
-        except AttributeError as a:
-            print(a)
-            st.write("Unable to recognize your voice")
-            speak("Please try one more time, your voice was not recognized")
-
-        except RuntimeError as r:
-            st.write("An issue occurred due to multiple clicks. Please restart and try again.")
-
-        # sys.exit(takeCommand())
-
-        time.sleep(2)
-        speak("Do you have any other queries? Please ask, I am listening.... ")
-
-        
-
-# UI
 st.set_page_config('Voice Bot by Greeshma Haridas',
                     "🤖",
                     initial_sidebar_state="expanded",
                     layout="centered")
+
+# UI
+
 
 title_alignment = """
     <style>
@@ -242,16 +52,191 @@ with col2:
     st.image("Major_Project/bot_image.png", use_container_width=True)
     st.caption("<p class='centered-text' style='color: #808080;'><b>Let's Chat! I'm Here to Help.</b></p>", unsafe_allow_html=True)
     st.markdown(title_alignment, unsafe_allow_html=True)
-    if st.button("Ask", use_container_width=True):
+    
+
+recognizer = Recognizer()
+
+# Text-to-speech function
+def text_speech(text):
+    tts = gTTS(text=text, lang='en')
+    speech_bytes = io.BytesIO()
+    tts.write_to_fp(speech_bytes)
+    speech_bytes.seek(0)
+    return speech_bytes
+
+# Capture audio and transcribe
+def takeCommand(audio_file):
+    if audio_file:
+        st.write("Audio file detected.")
+        audio_bytes = audio_file.getvalue()
+        with open("temp_audio.wav", "wb") as f:
+            f.write(audio_bytes)
+        with AudioFile("temp_audio.wav") as source:
+            audio_data = recognizer.record(source)
         try:
-            run_bot()
-            st.empty()
+            text = recognizer.recognize_google(audio_data, language='en-in')
+            st.write("User said: ", text)
+            return text
+             
         except Exception as e:
-            st.write("Please try one more time")
-            st.stop()
+            st.write("Error during transcription: ", st.error(e))
+            return ""
+    
+    else:
+        st.write("No audio input detected.")
+        return ""
+
+# Initialize session state
+if "audio_file" not in st.session_state:
+    st.session_state.audio_file = None
+if "transcribed_text" not in st.session_state:
+    st.session_state.transcribed_text = None
+if "response_audio" not in st.session_state:
+    st.session_state.response_audio = None
+
+# Step 1: Capture audio input from user
+audio_file = st.audio_input("Say something")
+if audio_file:
+    st.session_state.audio_file = audio_file
+
+# Step 2: Run bot when button is clicked
+if st.button("Run Bot",help='Click to start voice bot',use_container_width=True):
+    if st.session_state.audio_file:
+        st.session_state.transcribed_text = takeCommand(st.session_state.audio_file)
+    else:
+        st.write("Please record audio first.")
+
+# Step 3: Process and respond to transcription
+
+try:
+    if st.session_state.transcribed_text:
+        transcribed_text = st.session_state.transcribed_text.lower()
+
+        # Simple conversational logic
+        if any(word in transcribed_text for word in ['hi', 'hello', 'hey']):
+            response_text = "Hi! How can I help you today?"
+        
+
+                
+
+        elif any(word in transcribed_text for word in ['who', 'what', 'where', 'wikipedia', 'search']):
+            try:
+                query_tokens = word_tokenize(transcribed_text)
+                essential_words = [word for word, tag in pos_tag(query_tokens) if tag in ['NN', 'NNP']]
+                query = " ".join(essential_words)
+                with st.spinner(f"Searching for.....{query}"):
+                    st.write(f"Searched for {query}")
+                    search_results = wikipedia.search(query)
+                    if search_results:
+                        best_match = search_results[0]
+                        response_text = wikipedia.summary(best_match, sentences=1)
+                        
+
+                        estimated_duration = int(len(response_text.split()))
+                            # Display spinner while "reading"
+                                                    
+                    else:
+                            st.write("I couldn't find anything on Wikipedia.")
+            except Exception as e:
+                st.error("Oops! Your query is too broad. Please refine your search.")
+                st.write("Here are some suggestions:")
+
+                        # Display options for the user
+                for option in e.options:
+                    if st.button(option):  # Create a button for each option
+                        try:
+                            response_text = wikipedia.summary(option,sentences=1)
+                            st.write(f"**{option}:** {response_text}")
+                        except Exception as ex:
+                            st.error(f"Error retrieving summary for {option}: {ex}")
+                
+
+        
+        elif "open youtube" in transcribed_text:
+            webbrowser.open("youtube.com")
+            st.write("Opened Youtube in Browser")
+            time.sleep(3)
+
+        elif "open google" in transcribed_text:
+            webbrowser.open("https://www.google.com")
+            st.write("Opened Google in Browser")
+            time.sleep(3)
+
+        elif 'time' in transcribed_text or 'date' in transcribed_text:
+                    now = datetime.datetime.now()
+
+                    # Format date and time
+                    formatted_date = now.strftime("%B %d, %Y")
+                    formatted_time = now.strftime("%I:%M %p").lower()
+
+                    # Final reply
+                    st.write(f"Today is {formatted_date}, and the time is {formatted_time}.")
+                    response_text=f"Today is {formatted_date}, and the time is {formatted_time}."
+
+        elif 'joke' in transcribed_text:
+                    jokes = pyjokes.get_joke()
+                    response_text=f"Here it comes!{jokes}"
+                    st.write(f"**Joke:**\n\n```{jokes}```")
+                    time.sleep(3)
+
+        elif any(word in transcribed_text for word in ['thank you', 'thanks']):
+                    response_text="You're welcome!"
+                    st.write("You're welcome!")
+
+        elif any(word in transcribed_text for word in ['exit', 'bye', 'goodbye', 'end']):
+            response_text = "Thanks for giving me your time!"
+            st.write("Thanks for giving me your time 😊!")
+
+        elif transcribed_text==transcribed_text.lower():
+            try:
+                query_tokens = word_tokenize(transcribed_text)
+                essential_words = [word for word, tag in pos_tag(query_tokens) if tag in ['NN', 'NNP']]
+                query = " ".join(essential_words)
+                with st.spinner(f"Searching for.....{query}"):
+                    st.write(f"Searched for {query}")
+                    search_results = wikipedia.search(query)
+                    if search_results:
+                        best_match = search_results[0]
+                        response_text = wikipedia.summary(best_match, sentences=1)
+                        
+
+                        estimated_duration = int(len(response_text.split()))
+                            # Display spinner while "reading"
+                                                    
+                    else:
+                            st.write("I couldn't find anything on Wikipedia.")
+            except Exception as e:
+                st.error("Oops! Your query is too broad. Please refine your search.")
+                st.write("Here are some suggestions:")
+
+                        # Display options for the user
+                for option in e.options:
+                    if st.button(option):  # Create a button for each option
+                        try:
+                            response_text = wikipedia.summary(option,sentences=1)
+                            
+                        except Exception as ex:
+                            st.error(f"Error retrieving summary for {option}: {ex}")
+                
+             
+
+        else:
+            response_text = "Sorry, I didn't understand that."
+
+        # Convert response to speech
+        st.session_state.response_audio = text_speech(response_text)
+        
+        # Output the bot's response as audio and text
+        st.write(f"Bot says: {response_text}")
+        st.audio(st.session_state.response_audio, format="audio/wav", start_time=0)
+        
+except Exception as e:
+     st.write(e)
+     st.write("Please try one more time")
+       
 
 if st.button("Exit", use_container_width=True):
-    speak("Thanks for giving me your time")
+    st.audio(text_speech("Thanks for giving me your time"), format="audio/wav", start_time=0)
     st.markdown('<p class="centered-text"><b>Thanks for giving me your time 😊!</b></p>', unsafe_allow_html=True)
     st.stop()
 
