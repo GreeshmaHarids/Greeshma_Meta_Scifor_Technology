@@ -89,7 +89,7 @@ def takeCommand(audio_file):
 if "audio_file" not in st.session_state:
     st.session_state.audio_file = None
 if "transcribed_text" not in st.session_state:
-    st.session_state.transcribed_text = None
+    st.session_state.transcribed_text = ""
 if "response_audio" not in st.session_state:
     st.session_state.response_audio = None
 
