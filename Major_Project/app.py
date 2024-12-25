@@ -197,6 +197,7 @@ try:
         elif any(word in transcribed_text for word in ['exit', 'bye', 'goodbye', 'end']):
             response_text = "Thanks for giving me your time!"
             st.write("Thanks for giving me your time 😊!")
+            st.stop()
 
         elif transcribed_text==transcribed_text.lower():
             try:
@@ -247,37 +248,57 @@ except Exception as e:
        
 
 if st.button("Exit", use_container_width=True):
+    st.markdown('<p class="centered-text" style="color: #808080;"><b>Thanks for giving me your time 😊!</b></p>', unsafe_allow_html=True)
     st.audio(text_speech("Thanks for giving me your time"), format="audio/wav", start_time=0)
-    st.markdown('<p class="centered-text"><b>Thanks for giving me your time 😊!</b></p>', unsafe_allow_html=True)
     st.stop()
 
 
-st.sidebar.header("User Guidance",divider="violet")
+st.sidebar.header("User Guide", divider="violet")
 
 st.sidebar.markdown("""
-1. **Start Chatting**: Click the "Ask" button to begin interacting with the voice bot.
-2. **Voice Commands**: You can ask the bot questions like:
-   - "What is the time / date?"
-   - "Search for [topic] on Wikipedia using keywords like [topic],[what],[where][who],[search][wikipedia]"
-   - "Tell me a joke"
-   - "Open Google or YouTube"
-   - And much more!
+### **How to Use:**
+1. **Start Chatting:**
+   - Record your audio using the input provided in the app.
+   - Click the **"Run Bot"** button to interact with the bot.
 
-3. **Exit**: When you're done, simply click the "Exit" button to end the session.
+2. **Voice Commands Examples:**
+   - **Greet**: Say "Hi", "Hello", or "Hey" to start.
+   - **Ask for Time or Date**: Say "What is the time?" or "What is today's date?".
+   - **Search Wikipedia**: Use keywords like:
+     - "Search for [topic]"
+     - "Who is [name]?"
+     - "What is [topic]?"
+   - **Entertainment**: Say "Tell me a joke."
+   - **Open Websites**: Say:
+     - "Open Google"
+     - "Open YouTube"  
+       *(These open the websites in a new browser tab.)*
 
-4. **Greeting**: The bot will greet you based on the time of day and ask how it can assist you.
+3. **Exit Chat:**
+   - Say "Exit", "Bye", or "Goodbye" to end the session.
+   - Alternatively, click the **"Exit"** button.
 
-**Note**: The bot listens to your commands and responds with either a voice output or a text message.
+---
 
-Enjoy your time with the Voice Bot! 😊
-""")
+### **Features:**
+- **Real-Time Interaction**: The bot listens, processes, and responds to your commands via text and audio.
+- **Multifunctionality**:
+  - Handles general inquiries.
+  - Provides fun responses like jokes.
+  - Opens websites or applications directly.
+- **Error Handling**: If the bot cannot understand your command, refine your query or use simpler keywords.
 
+---
 
+### **Tips for Best Results:**
+- Speak clearly when recording your audio.
+- Keep commands concise, e.g., "Tell me about Albert Einstein."
+- For Wikipedia searches, use relevant and specific keywords.
 
+---
 
-st.sidebar.markdown("""
-<div style=
-        "font-size: 10px; 
+<div style="
+        font-size: 11px; 
         text-align:right;
         bottom:0;
         color:#C1AFD2;
