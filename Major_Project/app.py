@@ -4,7 +4,6 @@ import streamlit as st
 from speech_recognition import Recognizer, AudioFile
 from gtts import gTTS
 import wikipedia
-import webbrowser
 import pyjokes
 import time
 import io
@@ -141,27 +140,37 @@ try:
                 st.error("Oops! Your query is too broad. Please refine your search.")
                 st.write("Here are some suggestions:")
 
-                        # Display options for the user
-                for option in e.options:
-                    if st.button(option):  # Create a button for each option
-                        try:
-                            response_text = wikipedia.summary(option,sentences=1)
-                            st.write(f"**{option}:** {response_text}")
-                        except Exception as ex:
-                            st.error(f"Error retrieving summary for {option}: {ex}")
+                try:       # Display options for the user
+                    for option in e.options:
+                        if st.button(option):  # Create a button for each option
+                            try:
+                                response_text = wikipedia.summary(option,sentences=1)
+                                st.write(f"**{option}:** {response_text}")
+                            except Exception as ex:
+                                st.error(f"Error retrieving summary for {option}: {ex}")
+                except Exception as e:
+                     st.write("Error searching for options")
                 
 
         
         elif "open youtube" in transcribed_text:
-            webbrowser.open("youtube.com")
+            st.components.v1.html("""
+                <script type="text/javascript">
+                    window.open("https://www.youtube.com", "_blank");
+                </script>
+            """, height=0)
             response_text="Opened Youtube in Browser"
-            st.write("Opened Youtube in Browser")
             time.sleep(3)
 
         elif "open google" in transcribed_text:
-            webbrowser.open("https://www.google.com")
+            # webbrowser.open("https://www.google.com")
+            st.components.v1.html("""
+                <script type="text/javascript">
+                    window.open("https://www.google.com", "_blank");
+                </script>
+            """, height=0)  # Inject JavaScript to open Google
+
             response_text="Opened Google in Browser"
-            st.write("Opened Google in Browser")
             time.sleep(3)
 
         elif 'time' in transcribed_text or 'date' in transcribed_text:
@@ -233,7 +242,7 @@ try:
         st.audio(st.session_state.response_audio, format="audio/wav", start_time=0)
         
 except Exception as e:
-     st.write(e)
+     st.error("Please refine your search")
      st.write("Please try one more time")
        
 
