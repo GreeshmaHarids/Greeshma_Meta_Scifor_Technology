@@ -263,7 +263,6 @@ if st.button("Exit", use_container_width=True):
     st.markdown('<p class="centered-text" style="color: #808080;"><b>Thanks for giving me your time 😊!</b></p>', unsafe_allow_html=True)
     st.audio(text_speech("Thanks for giving me your time"), format="audio/wav", start_time=0,autoplay=True)
       # This can also help in some cases to force a page reload
-    
     st.stop()
 
 
