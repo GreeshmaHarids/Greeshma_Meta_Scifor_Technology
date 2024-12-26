@@ -63,6 +63,9 @@ def text_speech(text):
     speech_bytes.seek(0)
     return speech_bytes
 
+
+
+
 # Capture audio and transcribe
 def takeCommand(audio_file):
     if audio_file:
@@ -73,11 +76,11 @@ def takeCommand(audio_file):
         with AudioFile("temp_audio.wav") as source:
             audio_data = recognizer.record(source)
         try:
-            text = recognizer.recognize_google(audio_data, language='en-in')
+            text = recognizer.recognize_google(audio_data, language='en-in',)
             return text
              
         except Exception as e:
-            st.write("Error during transcription: ", st.error(e))
+            st.error(f"Error: Unable to transcribe the audio. Please try again")
             return ""
     
     else:
@@ -92,6 +95,9 @@ if "transcribed_text" not in st.session_state:
 if "response_audio" not in st.session_state:
     st.session_state.response_audio = None
 
+
+
+
 # Step 1: Capture audio input from user
 audio_file = st.audio_input("Say something")
 if audio_file:
@@ -99,6 +105,7 @@ if audio_file:
 
 # Step 2: Run bot when button is clicked
 if st.button("Run Bot",help='Click to start voice bot',use_container_width=True):
+
     if st.session_state.audio_file:
         st.session_state.transcribed_text = takeCommand(st.session_state.audio_file)
     else:
@@ -231,7 +238,7 @@ try:
                             st.error(f"Error retrieving summary for {option}: {ex}")
                 
              
-
+        
         else:
             response_text = "Sorry, I didn't understand that."
 
@@ -240,7 +247,12 @@ try:
         
         # Output the bot's response as audio and text
         st.write(f"Bot says: {response_text}")
-        st.audio(st.session_state.response_audio, format="audio/wav", start_time=0)
+        st.audio(st.session_state.response_audio, format="audio/wav", start_time=0, autoplay=True)
+
+        st.session_state.transcribed_text = ""
+
+    else:
+            st.write("No transcribed text to process.")
         
 except Exception as e:
      st.error("Please refine your search")
@@ -249,7 +261,9 @@ except Exception as e:
 
 if st.button("Exit", use_container_width=True):
     st.markdown('<p class="centered-text" style="color: #808080;"><b>Thanks for giving me your time 😊!</b></p>', unsafe_allow_html=True)
-    st.audio(text_speech("Thanks for giving me your time"), format="audio/wav", start_time=0)
+    st.audio(text_speech("Thanks for giving me your time"), format="audio/wav", start_time=0,autoplay=True)
+      # This can also help in some cases to force a page reload
+    
     st.stop()
 
 
@@ -307,3 +321,4 @@ st.sidebar.markdown("""
         <b>Created By Greeshma Haridas</b>
 </div>
 """, unsafe_allow_html=True)
+st.button("Clear",help="Click to clear all")
