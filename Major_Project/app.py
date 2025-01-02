@@ -6,8 +6,10 @@ import pyjokes
 import time
 import io
 import nltk 
-from nltk import word_tokenize, pos_tag
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 import datetime
+
 
 #ui
 
@@ -46,6 +48,9 @@ with col2:
     st.image("Major_Project/bot_image.png", use_container_width=True)
     st.caption("<p class='centered-text' style='color: #808080;'><b>Let's Chat! I'm Here to Help.</b></p>", unsafe_allow_html=True)
     st.markdown(title_alignment, unsafe_allow_html=True)
+
+
+
 
 
 st.sidebar.info(
@@ -110,8 +115,11 @@ st.sidebar.markdown("""
 
 #main code
 
+
+
 nltk.download('punkt_tab')
-nltk.download('averaged_perceptron_tagger_eng')
+nltk.download('stopwords')
+
 
 recognizer = Recognizer()
 
@@ -139,7 +147,8 @@ def takeCommand(audio_file):
             text = recognizer.recognize_google(audio_data, language='en-in',)
             return text
              
-        except Exception as e:
+        except Exception:
+            # st.write(e)
             st.error(f"Error: Unable to transcribe the audio. Please try again")
             return ""
          
@@ -156,6 +165,37 @@ def taketext(text_file):
           else:
                text = text_file
                return text
+          
+def preprocess_query(query):
+    stop_words = set(stopwords.words("english"))
+    words = word_tokenize(query)
+    filtered_query = " ".join([word for word in words if word.lower() not in stop_words])
+    return filtered_query
+
+def search_wikipedia(query):
+    try:
+        preprocessed_query = preprocess_query(query)
+        st.write(preprocessed_query)
+        result = wikipedia.summary(preprocessed_query, sentences=2)
+        return result
+    except wikipedia.exceptions.DisambiguationError as e:
+                st.error("Oops! Your query is too broad. Please refine your search.")
+                st.write("Here are some suggestions:")
+
+                try:       
+                    for option in e.options:
+                        if st.button(option):  
+                            try:
+                                result = wikipedia.summary(option,sentences=1)
+                                return result
+                            except Exception as ex:
+                                st.error(f"Error retrieving summary for {option}: {ex}")
+                except Exception as e:
+                     st.write("Error searching for options")
+    except wikipedia.exceptions.PageError as e:
+        return "No matching page found in wikipedia."
+    except Exception as e:
+        return "Please refine your search"
 
 # Initialize session state
 if "audio_file" not in st.session_state:
@@ -166,6 +206,10 @@ if "response_audio" not in st.session_state:
     st.session_state.response_audio = None
 if "text_file" not in st.session_state:
      st.session_state.text_file = None
+if "result" not in st.session_state:
+     st.session_state.result=None
+if "preprocessed_query" not in st.session_state:
+     st.session_state.preprocessed_query= None
 
 
 
@@ -209,40 +253,11 @@ try:
                 
 
         elif any(word in transcribed_text for word in ['who', 'what', 'where', 'wikipedia', 'search']):
-            try:
-                query_tokens = word_tokenize(transcribed_text)
-                essential_words = [word for word, tag in pos_tag(query_tokens) if tag in ['NN', 'NNP']]
-                query = " ".join(essential_words)
-                with st.spinner(f"Searching for.....{query}"):
-                    st.write(f"Searched for {query}")
-                    search_results = wikipedia.search(query)
-                    if search_results:
-                        best_match = search_results[0]
-                        response_text = wikipedia.summary(best_match, sentences=1)
-                        
+            st.session_state.preprocessed_query= preprocess_query(transcribed_text)
+            st.session_state.result=search_wikipedia(transcribed_text)
+            response_text=st.session_state.result
+            
 
-                        estimated_duration = int(len(response_text.split()))
-                           
-                                                    
-                    else:
-                            st.write("I couldn't find anything on Wikipedia.")
-            except Exception as e:
-                st.error("Oops! Your query is too broad. Please refine your search.")
-                st.write("Here are some suggestions:")
-
-                try:       
-                    for option in e.options:
-                        if st.button(option):  
-                            try:
-                                response_text = wikipedia.summary(option,sentences=1)
-                                st.write(f"**{option}:** {response_text}")
-                            except Exception as ex:
-                                st.error(f"Error retrieving summary for {option}: {ex}")
-                except Exception as e:
-                     st.write("Error searching for options")
-                
-
-        
         elif "open youtube" in transcribed_text:
 
             msg = st.empty()
@@ -298,35 +313,9 @@ try:
             st.stop()
 
         elif transcribed_text==transcribed_text.lower():
-            try:
-                query_tokens = word_tokenize(transcribed_text)
-                essential_words = [word for word, tag in pos_tag(query_tokens) if tag in ['NN', 'NNP']]
-                query = " ".join(essential_words)
-                with st.spinner(f"Searching for.....{query}"):
-                    st.write(f"Searched for {query}")
-                    search_results = wikipedia.search(query)
-                    if search_results:
-                        best_match = search_results[0]
-                        response_text = wikipedia.summary(best_match, sentences=1)
-                        
-
-                        estimated_duration = int(len(response_text.split()))
-                            # Display spinner while "reading"
-                                                    
-                    else:
-                            st.write("I couldn't find anything on Wikipedia.")
-            except Exception as e:
-                st.error("Oops! Your query is too broad. Please refine your search.")
-                st.write("Here are some suggestions:")
-
-                        # Display options for the user
-                for option in e.options:
-                    if st.button(option):  # Create a button for each option
-                        try:
-                            response_text = wikipedia.summary(option,sentences=1)
-                            
-                        except Exception as ex:
-                            st.error(f"Error retrieving summary for {option}: {ex}")
+            st.session_state.preprocessed_query= preprocess_query(transcribed_text)
+            st.session_state.result=search_wikipedia(transcribed_text)
+            response_text=st.session_state.result
                 
              
         
@@ -345,9 +334,8 @@ try:
     else:
             st.write("No transcribed text to process.")
         
-except Exception as e:
-     st.error("Please refine your search")
-     st.write("Please try one more time")
+except Exception:
+     st.markdown("*Please try one more time*")
        
 
 if st.button("Exit", use_container_width=True):
